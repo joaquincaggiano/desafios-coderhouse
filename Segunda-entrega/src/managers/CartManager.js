@@ -36,13 +36,71 @@ class CartManager {
       const productIndex = cart.products.findIndex(
         (product) => product.id === productId
       );
-      
+
       productIndex != -1
-      ? (await this.cartDao.updateProductInCart(cartId, {id:productId, quantity: cart.products[productIndex].quantity += 1}))
-      : (await this.cartDao.addProductToCart(cartId, { id: productId, quantity: 1 }));
+        ? (cart.products[productIndex].quantity += 1)
+        : cart.products.push({ id: productId, quantity: 1 });
+
+      await this.cartDao.addProductToCart(cartId, cart.products)
 
     } catch (error) {
       throw new Error("No se pudo agregar el producto al carrito");
+    }
+  }
+
+  async deleteProductFromCart(cartId, productId) {
+    try {
+      const cart = await this.cartDao.getCart(cartId);
+      const productInDb = await this.productDao.getOne(productId);
+
+      if(!cart || !productInDb) {
+        throw new Error("No encontramos el carrito o producto con ese Id")
+      }
+
+      const productToDelete = cart.products.filter((product) => product.id != productInDb.id);
+
+      await this.cartDao.deleteProductFromCart(cartId, productToDelete)
+
+    } catch (error) {
+      throw new Error("No se pudo borrar el producto del carrito");
+    }
+  }
+
+  async updateProductFromCart(cartId, productId, quantityToUpdate) {
+    try {
+      const cart = await this.cartDao.getCart(cartId);
+      const productInDb = await this.productDao.getOne(productId);
+
+      if(!cart || !productInDb) {
+        throw new Error("No encontramos el carrito o producto con ese Id")
+      }
+
+      const productIndex = cart.products.findIndex(
+        (product) => product.id == productInDb.id
+      );
+
+      cart.products[productIndex].quantity += Number(quantityToUpdate)
+
+      await this.cartDao.updateProductFromCart(cartId, cart.products)
+
+    } catch (error) {
+      throw new Error("No se pudo actualizar el producto del carrito");
+    }
+  }
+
+  async deleteAllProductsFromCart(cartId) {
+    try {
+      const cart = await this.cartDao.getCart(cartId);
+      console.log("cart", cart);
+
+      if(!cart) {
+        throw new Error("No encontramos el carrito con ese Id")
+      }
+
+      await this.cartDao.deleteAllProductsFromCart(cartId, [])
+
+    } catch (error) {
+      throw new Error("No pudimos borrar todos los productos del carrito");
     }
   }
 }

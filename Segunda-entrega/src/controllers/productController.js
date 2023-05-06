@@ -30,7 +30,7 @@ export const add = async (req, res) => {
 
   const product = req.body;
   try {
-    const newProduct = await await manager.create(product);
+    const newProduct = await manager.create(product);
     return res
       .status(200)
       .json({ message: "Producto creado con éxito", data: newProduct });

@@ -1,47 +1,82 @@
 import ProductMongooseDao from "../daos/productMongooseDao.js";
 
 class ProductManager {
-  constructor()
-  {
-     this.productDao = new ProductMongooseDao();
+  constructor() {
+    this.productDao = new ProductMongooseDao();
   }
 
-  async find() // getAll, find, list, getStudents
-  {
-    return this.productDao.find();
+  async find() {
+    try {
+      return this.productDao.find();
+    } catch (error) {
+      throw new Error("No pudimos encontrar los productos");
+    }
   }
 
-  async getOne(id) // getOne, get, getStudent
-  {
-    return this.productDao.getOne(id);
+  async getOne(id) {
+    try {
+      return this.productDao.getOne(id);
+    } catch (error) {
+      throw new Error(`No pudimos encontrar el producto con id: ${id}`);
+    }
   }
 
-  async create(data) // create, save, insert
-  {
-    const student = await this.productDao.create(data);
+  async create(data) {
+    if (!data.title || data.title.trim().length === 0)
+      throw Error("Empty title field");
 
-    return student;
+    if (!data.description || data.description.trim().length === 0)
+      throw Error("Empty description field");
+
+    if (!data.price) throw Error("Empty price field");
+
+    if (!data.thumbnail || data.thumbnail.trim().length === 0)
+      throw Error("Empty thumbnail field");
+
+    if (!data.code || data.code.trim().length === 0)
+      throw Error("Empty code field");
+
+    if (!data.stock) throw Error("Empty stock field");
+
+    const codeExist = await this.productDao.findByFilter({ code: data.code });
+    if (codeExist.length) {
+      throw new Error("El código del producto ya existe");
+    }
+
+    const productToCreate = await this.productDao.create(data);
+
+    return productToCreate;
   }
 
-  async updateOne(id, data) // update, updateOne, modify
-  {
-    return this.productDao.updateOne(id, data);
+  async updateOne(id, data) {
+    // const productToUpdate = await this.productDao.getOne(id);
+    // const productsInDb = await this.productDao.find();
+    try {
+      const valuesOfProduct = Object.values(data);
+
+      valuesOfProduct.map((value) => {
+        if (value.trim().length === 0) {
+          throw new Error("Debes completar todos los campos");
+        }
+        return value;
+      });
+
+      return this.productDao.updateOne(id, data);
+    } catch (error) {
+      throw new Error("No se puedo actualizar el producto");
+    }
   }
 
-  async deleteOne(id) // delete, deleteOne, remove, removeOne
-  {
-    return this.productDao.deleteOne(id);
+  async deleteOne(id) {
+    try {
+      return this.productDao.deleteOne(id);
+    } catch (error) {
+      throw new Error("No se pudo borrar el producto");
+    }
   }
 }
 
 export default ProductManager;
-
-
-
-
-
-
-
 
 ///////////////////////////     FILE SYSTEM     ///////////////////////////
 

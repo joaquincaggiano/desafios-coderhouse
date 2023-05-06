@@ -9,6 +9,7 @@ const ProductSchema = new Schema({
   thumbnail: { type: Schema.Types.String, require: true },
   code: { type: Schema.Types.String, require: true },
   stock: { type: Schema.Types.Number, require: true },
+  status: { type: Schema.Types.Boolean, default: true },
 });
 
 export default mongoose.model(productCollection, ProductSchema);

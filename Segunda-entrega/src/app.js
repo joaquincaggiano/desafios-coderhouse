@@ -18,8 +18,8 @@ void(async() => {
   app.use("/api/products", productRouter);
   app.use("/api/carts", cartRouter);
   
-  app.listen(3000, () => {
-    console.log("Servidor escuchando en el puerto 3000");
+  app.listen(8080, () => {
+    console.log("Servidor escuchando en el puerto 8080");
   });
 })()
 
