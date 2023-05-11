@@ -29,8 +29,8 @@ class CartMongooseDao {
     };
   }
 
-  async addProductToCart(cartId, productId/*, data*/) {
-    const document = await cartSchema.findOneAndUpdate(
+  async addProductToCart(cartId, productId) {
+    let document = await cartSchema.findOneAndUpdate(
       { _id: cartId, "products._id": productId },
       { $inc: { "products.$.quantity": 1 } },
       { new: true }
@@ -53,9 +53,6 @@ class CartMongooseDao {
         quantity: product.quantity,
       })),
     };
-    // const cartDocument = await cartSchema.updateOne({_id: id}, {$set: {"products": data}},);
-
-    // return cartDocument;
   }
 
   async deleteProductFromCart(id, data) {

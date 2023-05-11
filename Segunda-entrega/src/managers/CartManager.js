@@ -31,21 +31,32 @@ class CartManager {
         throw new Error("No existe ese carrito");
       }
 
+      // const validProduct = await this.productDao.getOne(productId);
+
+      // if (!validProduct) {
+      //   throw new Error("El producto con ese Id no existe");
+      // }
+
+      const productCart = cart.products.find((product) => product?._id == productId);
+
+    if (!productCart) {
       const validProduct = await this.productDao.getOne(productId);
 
       if (!validProduct) {
         throw new Error("El producto con ese Id no existe");
       }
+      cart.products.push({ _id: productId, quantity: 1 });
+    }
 
-      const productIndex = cart.products.findIndex(
-        (product) => product._id === productId
-      );
+      // const productIndex = cart.products.findIndex(
+      //   (product) => product._id == productId
+      // );
 
-      productIndex != -1
-        ? (cart.products[productIndex].quantity += 1)
-        : cart.products.push({ _id: productId, quantity: 1 });
+      // productIndex != -1
+      //   ? (cart.products[productIndex].quantity += 1)
+      //   : cart.products.push({ _id: productId, quantity: 1 });
 
-      await this.cartDao.addProductToCart(cartId, productId/*, cart.products*/)
+      await this.cartDao.addProductToCart(cartId, productId)
 
     } catch (error) {
       throw new Error("No se pudo agregar el producto al carrito");
@@ -95,7 +106,6 @@ class CartManager {
   async deleteAllProductsFromCart(cartId) {
     try {
       const cart = await this.cartDao.getCart(cartId);
-      console.log("cart", cart);
 
       if(!cart) {
         throw new Error("No encontramos el carrito con ese Id")
