@@ -3,6 +3,7 @@
 // const cartManagerServer = new CartManager();
 import { Router } from "express";
 import CartController, {
+  getAllCarts,
   createCart,
   addProductToCart,
   deleteProductFromCart,
@@ -12,9 +13,11 @@ import CartController, {
 
 const cartRouter = Router();
 
+cartRouter.get("/", getAllCarts);
+
 cartRouter.post("/create", createCart);
 
-cartRouter.get("/:cid", CartController.list);
+cartRouter.get("/:cid", CartController.getCart);
 
 cartRouter.post("/:cid/product/:pid", addProductToCart);
 

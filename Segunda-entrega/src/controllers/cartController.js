@@ -1,7 +1,7 @@
 import CartManager from "../managers/CartManager.js";
 
 class CartController {
-  static list = async (req, res) => {
+  static getCart = async (req, res) => {
     const manager = new CartManager();
 
     try {
@@ -9,13 +9,28 @@ class CartController {
       const productsToShow = await manager.getCart(cartId);
       return res
         .status(200)
-        .json({ message: "Productos", data: productsToShow });
+        .json({ message: "Carrito", data: productsToShow });
     } catch (error) {
       return res
         .status(400)
         .json({ message: `Carrito no encontrado` });
     }
   };
+}
+
+export const getAllCarts = async (req, res) => {
+  const manager = new CartManager();
+
+  try {
+    const productsToShow = await manager.getAllCarts();
+    return res
+      .status(200)
+      .json({ message: "Carritos", data: productsToShow });
+  } catch (error) {
+    return res
+      .status(400)
+      .json({ message: `Carritos no encontrado` });
+  }
 }
 
 export const createCart = async (req, res) => {

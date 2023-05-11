@@ -1,11 +1,28 @@
 import productSchema from "../models/productSchema.js";
 
 class ProductMongooseDao {
-  async find() {
+  async find(limit, type, sort) {
+    const aggregation = [];
     try {
-      const productsDocument = await productSchema.find({ status: true });
+      aggregation.push({
+        $limit: limit,
+      });
+      if (type) {
+        aggregation.push({
+          $match: { category: type },
+        });
+      }
+      if (sort) {
+        aggregation.push({
+          $sort: {
+            price: sort,
+          },
+        });
+      }
 
-      return productsDocument.map((document) => ({
+      const filtered = await productSchema.aggregate(aggregation);
+
+      return filtered.map((document) => ({
         id: document._id,
         title: document.title,
         description: document.description,
@@ -13,8 +30,22 @@ class ProductMongooseDao {
         thumbnail: document.thumbnail,
         code: document.code,
         stock: document.stock,
+        category: document.category,
         status: document.status,
       }));
+
+      // const productsDocument = await productSchema.paginate();
+
+      // return productsDocument.map((document) => ({
+      //   id: document._id,
+      //   title: document.title,
+      //   description: document.description,
+      //   price: document.price,
+      //   thumbnail: document.thumbnail,
+      //   code: document.code,
+      //   stock: document.stock,
+      //   status: document.status,
+      // }));
     } catch (error) {
       console.log(error);
       throw new Error("No se pudieron encontrar los productos");
@@ -42,6 +73,7 @@ class ProductMongooseDao {
         thumbnail: producDocument.thumbnail,
         code: producDocument.code,
         stock: producDocument.stock,
+        category: producDocument.category,
         status: producDocument.status,
       };
     } catch (error) {
@@ -62,6 +94,7 @@ class ProductMongooseDao {
         thumbnail: producDocument.thumbnail,
         code: producDocument.code,
         stock: producDocument.stock,
+        category: producDocument.category,
         status: producDocument.status,
       };
     } catch (error) {
@@ -86,6 +119,7 @@ class ProductMongooseDao {
         thumbnail: producDocument.thumbnail,
         code: producDocument.code,
         stock: producDocument.stock,
+        category: producDocument.category,
       };
     } catch (error) {
       console.log(error);

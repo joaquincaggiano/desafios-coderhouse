@@ -2,13 +2,20 @@ import ProductManager from "../managers/ProductManager.js";
 
 class ProductController {
   static list = async (req, res) => {
-    const manager = new ProductManager();
+    try {
+      const limit = Number(req.query.limit || 10);
+      // const page = Number(req.query.page) || 1;
+      const type = req.query.type || null;
+      const sort = Number(req.query.sort) || null;
 
-    const products = await manager.find();
-    const limit = req.query.limit || 10;
-    const productsLimit = products.slice(0, limit);
+      const manager = new ProductManager();
 
-    return res.status(200).json(productsLimit);
+      const products = await manager.find(limit, type, sort);
+
+      return res.status(200).json({ status: "success", products });
+    } catch (error) {
+      return res.status(400).json({ status: "error" });
+    }
   };
 }
 

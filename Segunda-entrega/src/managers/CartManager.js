@@ -7,6 +7,10 @@ class CartManager {
     this.productDao = new ProductMongooseDao();
   }
 
+  async getAllCarts() {
+    return this.cartDao.getAllCarts();
+  }
+
   async getCart(id) {
     return this.cartDao.getCart(id);
   }
@@ -34,14 +38,14 @@ class CartManager {
       }
 
       const productIndex = cart.products.findIndex(
-        (product) => product.id === productId
+        (product) => product._id === productId
       );
 
       productIndex != -1
         ? (cart.products[productIndex].quantity += 1)
-        : cart.products.push({ id: productId, quantity: 1 });
+        : cart.products.push({ _id: productId, quantity: 1 });
 
-      await this.cartDao.addProductToCart(cartId, cart.products)
+      await this.cartDao.addProductToCart(cartId, productId/*, cart.products*/)
 
     } catch (error) {
       throw new Error("No se pudo agregar el producto al carrito");

@@ -5,9 +5,9 @@ class ProductManager {
     this.productDao = new ProductMongooseDao();
   }
 
-  async find() {
+  async find(limit,  type, sort) {
     try {
-      return this.productDao.find();
+      return this.productDao.find(limit, type, sort);
     } catch (error) {
       throw new Error("No pudimos encontrar los productos");
     }
